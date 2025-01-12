@@ -8,7 +8,7 @@ from pydub.playback import play
 import time
 
 class IVRSystem:
-    def __init__(self, audio_folder="IVR_Audio"):
+    def __init__(self, audio_folder="IVR Audio 2"):
         self.audio_folder = audio_folder
         self.sample_rate = 44100
         self.channels = 1
@@ -93,17 +93,21 @@ class IVRSystem:
 def main():
     # Example usage
     ivr = IVRSystem()
-    ivr.play_audio("Greet message.mp3")
+    ivr.play_audio("Greet message.wav")
     audio_sequence = [
-        "1.QNA start + Name.mp3",
+        "1.QNA start + Name.wav",
         "2.Age.mp3",
-        "3.salary amount.mp3"
+        "3.salary amount.wav",
+        "4.any savings or investment.wav",
+        "5. Budgeting + loan or insurance.wav",
     ]
     
     try:
         ivr.process_ivr_sequence(audio_sequence)
+        ivr.play_audio("Thank you your response is submitted.wav")
     except Exception as e:
         print(f"Error in IVR sequence: {str(e)}")
+
 
 if __name__ == "__main__":
     main()
