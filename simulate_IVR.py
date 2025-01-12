@@ -93,6 +93,7 @@ class IVRSystem:
 def main():
     # Example usage
     ivr = IVRSystem()
+    ivr.play_audio("Greet message.mp3")
     audio_sequence = [
         "1.QNA start + Name.mp3",
         "2.Age.mp3",
