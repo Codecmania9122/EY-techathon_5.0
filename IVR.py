@@ -2,6 +2,7 @@ import requests
 import os
 from flask import Flask, request, jsonify
 from datetime import datetime
+import json
 
 # Flask app to handle IVR webhooks
 app = Flask(__name__)
@@ -18,6 +19,14 @@ os.makedirs(RECORDINGS_DIR, exist_ok=True)
 
 # Sarvam AI API URL
 SARVAM_API_URL = "https://api.sarvam.ai/speech-to-text-translate"
+
+def log_user_data(data):
+    directory_path = os.path.join(os.path.dirname(__file__), "user_log")
+    os.makedirs(directory_path, exist_ok=True)
+    time_stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    json_path = os.path.join(directory_path, f"user_responses_{time_stamp}.json")
+    with open(json_path, "w") as f:
+        json.dump(data, f, indent=2)
 
 @app.route("/ivr-greeting", methods=["POST"])
 def ivr_greeting():
@@ -59,6 +68,7 @@ def ivr_menu():
             <Redirect>/ivr-greeting</Redirect>
         </Response>
         """
+    log_user_data({"action": "ivr_menu", "pressed_key": pressed_key})
     return response_xml, 200, {'Content-Type': 'text/xml'}
 
 @app.route("/ivr-support-query", methods=["POST"])
@@ -89,6 +99,7 @@ def ivr_support_query():
 
         if transcript:
             print(f"Support/Query Transcription: {transcript}")
+            log_user_data({"action": "ivr_support_query", "recording_url": recording_url})
             return jsonify({"support_query_transcription": transcript}), 200
         else:
             return "प्रतिलिपि बनाने में विफल", 500
@@ -138,6 +149,7 @@ def ivr_response():
 
         if transcript:
             print(f"Transcription: {transcript}")
+            log_user_data({"action": "ivr_response", "recording_url": recording_url})
             return jsonify({"transcription": transcript}), 200
         else:
             return "प्रतिलिपि बनाने में विफल", 500
